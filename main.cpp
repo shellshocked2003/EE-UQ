@@ -20,7 +20,7 @@
 #include <QOpenGLWidget>
 #include <QStandardPaths>
 #include <QDir>
-
+#include <QStatusBar>
 
 static QString logFilePath;
 static bool logToFile = false;
@@ -58,6 +58,11 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
+
+#ifdef Q_OS_WIN
+    QApplication::setAttribute(Qt::AA_UseOpenGLES);
+#endif
+
     //Setting Core Application Name, Organization, Version and Google Analytics Tracking Id
     QCoreApplication::setApplicationName("EE-UQ");
     QCoreApplication::setOrganizationName("SimCenter");
@@ -65,6 +70,10 @@ int main(int argc, char *argv[])
     GoogleAnalytics::SetTrackingId("UA-126303135-1");
     GoogleAnalytics::StartSession();
     GoogleAnalytics::ReportStart();
+
+    //Init resources from static libraries (e.g. SimCenterCommonQt or s3hark)
+    Q_INIT_RESOURCE(images1);
+    Q_INIT_RESOURCE(resources);
 
     //
     // set up logging of output messages for user debugging
@@ -112,7 +121,6 @@ int main(int argc, char *argv[])
     //
 
     QApplication a(argc, argv);
-
     //
     // create a remote interface
     //
@@ -131,7 +139,7 @@ int main(int argc, char *argv[])
     WorkflowAppWidget *theInputApp = new WorkflowAppEE_UQ(theRemoteService);
     MainWindowWorkflowApp w(QString("EE-UQ: Response of Building to Earthquake"), theInputApp, theRemoteService);
 
-
+    /*
     QString textAboutEE_UQ = "\
             <p> \
             This is the Earthquake Engineering with Uncertainty Quantification (EE-UQ) application.\
@@ -160,6 +168,12 @@ int main(int argc, char *argv[])
         <p>";
 
         w.setAbout(textAboutEE_UQ);
+    */
+
+
+    QString aboutTitle = "About the SimCenter EE-UQ Application"; // this is the title displayed in the on About dialog
+    QString aboutSource = ":/resources/docs/textAboutEEUQ.html";  // this is an HTML file stored under resources
+    w.setAbout(aboutTitle, aboutSource);
 
     QString version("Version 2.1.0");
     w.setVersion(version);
@@ -190,6 +204,7 @@ int main(int argc, char *argv[])
     //
 
     w.show();
+    w.statusBar()->showMessage("Ready", 5000);
 
 #ifdef Q_OS_WIN
     QFile file(":/styleCommon/stylesheetWIN.qss");

@@ -116,8 +116,11 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
     //theResults = new DakotaResultsSampling(theRVs);
     theResults = theUQ_Selection->getResults();
 
-    localApp = new LocalApplication("EE-UQ workflow.py");
-    remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
+    localApp = new LocalApplication("femUQ.py");
+    remoteApp = new RemoteApplication("femUQ.py", theService);
+
+    //    localApp = new LocalApplication("EE-UQ workflow.py");
+    //   remoteApp = new RemoteApplication("EE-UQ workflow.py", theService);
 
     // localApp = new LocalApplication("EE-UQ.py");
     // remoteApp = new RemoteApplication("EE-UQ.py", theService);
@@ -180,6 +183,8 @@ WorkflowAppEE_UQ::WorkflowAppEE_UQ(RemoteService *theService, QWidget *parent)
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     this->setLayout(horizontalLayout);
+    this->setContentsMargins(0,5,0,5);
+    horizontalLayout->setMargin(0);
 
     //
     // create the component selection & add the components to it
@@ -221,8 +226,8 @@ WorkflowAppEE_UQ::~WorkflowAppEE_UQ()
     // as some classes in destructur remove RV from the RVCOntainer
     // which may already have been destructed .. so removing so no destructor called
 
-    QWidget *newUQ = new QWidget();
-    theComponentSelection->swapComponent("RV",newUQ);
+  //    QWidget *newUQ = new QWidget();
+  //    theComponentSelection->swapComponent("RV",newUQ);
 }
 
 void WorkflowAppEE_UQ::replyFinished(QNetworkReply *pReply)
